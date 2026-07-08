@@ -1,18 +1,27 @@
 const canvas = document.querySelector("#sparkle-canvas");
 const ctx = canvas.getContext("2d");
 const button = document.querySelector("#accept-button");
-const panel = document.querySelector("#promise-panel");
+const panel = document.querySelector("#accepted-panel");
 const toast = document.querySelector("#toast");
-const typingLine = document.querySelector("#typing-line");
-const approvedLine = document.querySelector(".approved-line");
+const reviewBox = document.querySelector("#review-box");
+const reviewText = document.querySelector("#review-text");
+const dayCount = document.querySelector("#day-count");
 
-const text = "protocol: send_each_other_something_daily = true;";
-const colors = ["#ff4f9f", "#ffd166", "#64e3ff", "#72f2a6", "#ff7a8a"];
-let particles = [];
-let burstParticles = [];
+const startDate = new Date("2026-07-08T00:00:00+07:00");
+const colors = ["#ff7eb6", "#ffb38a", "#c9b8ff", "#a8f0d4", "#fff3a8"];
+let sparkles = [];
 let width = 0;
 let height = 0;
 let pixelRatio = 1;
+
+function updateDayCount() {
+  const now = new Date();
+  const start = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const diff = today - start;
+  const days = Math.max(1, Math.floor(diff / 86400000) + 1);
+  dayCount.textContent = String(days);
+}
 
 function resizeCanvas() {
   pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
@@ -23,127 +32,96 @@ function resizeCanvas() {
   canvas.style.width = `${width}px`;
   canvas.style.height = `${height}px`;
   ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-  createParticles();
+  createSparkles();
 }
 
-function createParticles() {
-  const count = Math.min(90, Math.floor((width * height) / 9000));
-  particles = Array.from({ length: count }, () => ({
+function createSparkles() {
+  const count = Math.min(70, Math.floor((width * height) / 11000));
+  sparkles = Array.from({ length: count }, () => ({
     x: Math.random() * width,
     y: Math.random() * height,
-    radius: Math.random() * 1.9 + 0.6,
-    speed: Math.random() * 0.45 + 0.12,
-    alpha: Math.random() * 0.6 + 0.25,
+    size: Math.random() * 5 + 3,
+    speed: Math.random() * 0.45 + 0.18,
+    spin: Math.random() * Math.PI,
     color: colors[Math.floor(Math.random() * colors.length)],
+    alpha: Math.random() * 0.5 + 0.35,
   }));
+}
+
+function drawStar(x, y, radius, spin) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(spin);
+  ctx.beginPath();
+
+  for (let i = 0; i < 8; i += 1) {
+    const angle = (Math.PI * 2 * i) / 8;
+    const pointRadius = i % 2 === 0 ? radius : radius * 0.38;
+    ctx.lineTo(Math.cos(angle) * pointRadius, Math.sin(angle) * pointRadius);
+  }
+
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
 }
 
 function drawSparkles() {
   ctx.clearRect(0, 0, width, height);
 
-  particles.forEach((particle) => {
-    particle.y -= particle.speed;
-    particle.x += Math.sin((particle.y + particle.radius) * 0.015) * 0.25;
+  sparkles.forEach((sparkle) => {
+    sparkle.y -= sparkle.speed;
+    sparkle.spin += 0.012;
+    sparkle.x += Math.sin(sparkle.y * 0.01) * 0.16;
 
-    if (particle.y < -10) {
-      particle.y = height + 10;
-      particle.x = Math.random() * width;
+    if (sparkle.y < -12) {
+      sparkle.y = height + 12;
+      sparkle.x = Math.random() * width;
     }
 
-    ctx.globalAlpha = particle.alpha;
-    ctx.fillStyle = particle.color;
-    ctx.beginPath();
-    ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
-    ctx.fill();
-  });
-
-  burstParticles = burstParticles.filter((particle) => particle.life > 0);
-  burstParticles.forEach((particle) => {
-    particle.x += particle.vx;
-    particle.y += particle.vy;
-    particle.vy += 0.045;
-    particle.life -= 0.018;
-
-    ctx.globalAlpha = Math.max(particle.life, 0);
-    ctx.fillStyle = particle.color;
-    ctx.beginPath();
-    ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.globalAlpha = sparkle.alpha;
+    ctx.fillStyle = sparkle.color;
+    drawStar(sparkle.x, sparkle.y, sparkle.size, sparkle.spin);
   });
 
   ctx.globalAlpha = 1;
   requestAnimationFrame(drawSparkles);
 }
 
-function typeMessage(index = 0) {
-  typingLine.textContent = text.slice(0, index);
-
-  if (index < text.length) {
-    window.setTimeout(() => typeMessage(index + 1), 42);
-    return;
-  }
-
-  window.setTimeout(() => approvedLine.classList.add("is-visible"), 280);
-}
-
-function createConfetti() {
-  const amount = 52;
-
-  for (let i = 0; i < amount; i += 1) {
-    const piece = document.createElement("span");
-    piece.className = "confetti";
-    piece.style.left = `${Math.random() * 100}vw`;
-    piece.style.top = `${Math.random() * 16 + 6}vh`;
-    piece.style.background = colors[i % colors.length];
-    piece.style.setProperty("--x", `${(Math.random() - 0.5) * 220}px`);
-    piece.style.setProperty("--y", `${Math.random() * 420 + 260}px`);
-    piece.style.setProperty("--r", `${Math.random() * 720 - 360}deg`);
-    piece.style.animationDelay = `${Math.random() * 0.22}s`;
-    document.body.appendChild(piece);
-    window.setTimeout(() => piece.remove(), 1900);
-  }
-}
-
-function createHeartBurst() {
+function createFloatingHearts() {
   const rect = button.getBoundingClientRect();
-  const centerX = rect.left + rect.width / 2;
-  const centerY = rect.top + rect.height / 2;
+  const startX = rect.left + rect.width / 2;
+  const startY = rect.top + rect.height / 2;
 
-  for (let i = 0; i < 36; i += 1) {
-    const angle = (Math.PI * 2 * i) / 36;
-    const speed = Math.random() * 3.8 + 2.2;
-
-    burstParticles.push({
-      x: centerX,
-      y: centerY,
-      vx: Math.cos(angle) * speed,
-      vy: Math.sin(angle) * speed,
-      radius: Math.random() * 3.5 + 2,
-      life: 1,
-      color: colors[i % colors.length],
-    });
+  for (let i = 0; i < 28; i += 1) {
+    const heart = document.createElement("span");
+    heart.className = "floating-heart";
+    heart.textContent = i % 3 === 0 ? "♡" : "♥";
+    heart.style.left = `${startX + (Math.random() - 0.5) * 150}px`;
+    heart.style.top = `${startY + (Math.random() - 0.5) * 28}px`;
+    heart.style.color = colors[i % colors.length];
+    heart.style.setProperty("--x", `${(Math.random() - 0.5) * 190}px`);
+    heart.style.setProperty("--r", `${Math.random() * 90 - 45}deg`);
+    heart.style.animationDelay = `${Math.random() * 0.26}s`;
+    document.body.appendChild(heart);
+    window.setTimeout(() => heart.remove(), 2100);
   }
 }
 
-function showAcceptance() {
+function acceptStreak() {
   button.disabled = true;
-  button.querySelector("span").textContent = "Accepted & deployed";
-  button.querySelector("small").textContent = "chuỗi đã được kích hoạt";
+  button.textContent = "Anh chấp nhận rồi";
+  reviewBox.classList.add("is-accepted");
+  reviewText.textContent = "chấp nhận yêu cầu bắt đầu chuỗi";
   panel.classList.add("is-open");
   toast.classList.add("is-visible");
-  createConfetti();
-  createHeartBurst();
-
-  window.setTimeout(() => {
-    panel.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, 360);
+  createFloatingHearts();
 
   window.setTimeout(() => toast.classList.remove("is-visible"), 3200);
 }
 
 window.addEventListener("resize", resizeCanvas);
-button.addEventListener("click", showAcceptance);
+button.addEventListener("click", acceptStreak);
 
+updateDayCount();
 resizeCanvas();
 drawSparkles();
-typeMessage();

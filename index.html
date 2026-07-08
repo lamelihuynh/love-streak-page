@@ -3,12 +3,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#0f172a" />
+    <meta name="theme-color" content="#fff1f7" />
     <meta
       name="description"
-      content="Một lời chấp nhận chuỗi thật lung linh, được viết bằng tình yêu và một chút chất IT."
+      content="Một lời chấp nhận bắt đầu chuỗi thật dễ thương."
     />
-    <title>Streak Accepted</title>
+    <title>Chuỗi của chúng ta</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -21,82 +21,46 @@
     <canvas id="sparkle-canvas" aria-hidden="true"></canvas>
 
     <main class="app-shell">
-      <section class="hero" aria-labelledby="page-title">
-        <div class="status-pill">
-          <span class="pulse-dot"></span>
-          Request received: Daily streak with em
+      <section class="card" aria-labelledby="page-title">
+        <div class="sticker-cloud cloud-one">iu</div>
+        <div class="sticker-cloud cloud-two">mỗi ngày</div>
+
+        <p class="tiny-label">Gửi em bé của anh</p>
+        <div class="heart-bubble" aria-hidden="true">
+          <span>♡</span>
         </div>
 
-        <div class="phone-scene" aria-hidden="true">
-          <div class="orbit orbit-one"></div>
-          <div class="orbit orbit-two"></div>
-          <div class="heart-core">♥</div>
-        </div>
+        <h1 id="page-title">Yêu cầu bắt đầu chuỗi của em</h1>
 
-        <p class="eyebrow">From your IT boyfriend</p>
-        <h1 id="page-title">Anh đã review request của em.</h1>
-        <p class="lead">
-          Sau khi kiểm tra kỹ requirements, emotional impact và mức độ đáng yêu,
-          anh xác nhận: yêu cầu duy trì chuỗi mỗi ngày đã được duyệt.
-        </p>
-
-        <div class="terminal-card" role="group" aria-label="Thông báo chấp nhận chuỗi">
-          <div class="terminal-top">
-            <span></span>
-            <span></span>
-            <span></span>
-            <strong>love-streak.sh</strong>
-          </div>
-          <div class="terminal-body">
-            <p><span>$</span> npm run accept-your-streak</p>
-            <p class="typing-line" id="typing-line"></p>
-            <p class="approved-line">status: ACCEPTED_FOREVER ✨</p>
-          </div>
+        <div class="review-box" id="review-box">
+          <span class="review-dot"></span>
+          <p id="review-text">đang được anh xem xét...</p>
         </div>
 
         <button class="accept-button" id="accept-button" type="button">
-          <span>Deploy lời chấp nhận</span>
-          <small>tap để mở bất ngờ</small>
+          Chạm để anh trả lời
         </button>
-      </section>
 
-      <section class="promise-panel" id="promise-panel" aria-live="polite">
-        <div class="panel-glow"></div>
-        <p class="mini-label">Daily Streak Contract</p>
-        <h2>Chuỗi của tụi mình bắt đầu từ hôm nay.</h2>
-        <p>
-          Mỗi ngày anh sẽ gửi em một điều gì đó: một lời chúc, một tấm hình,
-          một câu chuyện nhỏ, hoặc đơn giản là một dấu hiệu rằng anh vẫn đang
-          nhớ em trong ngày đó.
-        </p>
+        <section class="accepted-panel" id="accepted-panel" aria-live="polite">
+          <p class="accepted-kicker">đã chấp nhận</p>
+          <h2>Chuỗi của chúng ta bắt đầu từ hôm nay</h2>
+          <time datetime="2026-07-08">08 / 07 / 2026</time>
 
-        <div class="promise-grid">
-          <article>
-            <span>01</span>
-            <strong>Không seen rồi biến mất</strong>
-            <p>Anh sẽ phản hồi bằng trái tim thật, không phải auto-reply.</p>
-          </article>
-          <article>
-            <span>02</span>
-            <strong>Không để chuỗi cô đơn</strong>
-            <p>Mỗi ngày có một chút tụi mình, dù hôm đó bận cỡ nào.</p>
-          </article>
-          <article>
-            <span>03</span>
-            <strong>Không chỉ là streak</strong>
-            <p>Đây là cách anh nhắc em rằng em luôn có chỗ trong ngày của anh.</p>
-          </article>
-        </div>
+          <div class="day-counter">
+            <span id="day-count">1</span>
+            <p>ngày mình giữ chuỗi cùng nhau</p>
+          </div>
 
-        <div class="signature">
-          <p>commit message:</p>
-          <strong>“Anh đồng ý tạo chuỗi với em, và sẽ giữ nó bằng sự chân thành.”</strong>
-        </div>
+          <p class="soft-note">
+            Từ hôm nay, mỗi ngày anh sẽ gửi em một điều nhỏ xíu, để em biết là
+            trong ngày của anh luôn có em.
+          </p>
+        </section>
       </section>
     </main>
 
     <div class="toast" id="toast" role="status" aria-live="polite">
-      Request accepted. Trái tim đã được deploy thành công.
+      Anh chấp nhận rồi nha. Chuỗi bắt đầu từ 08/07.
     </div>
 
     <script src="script.js"></script>
